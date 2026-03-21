@@ -16,6 +16,7 @@ public class MazeGrid : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        Debug.Log("MazeGrid Awake: Building walkable grid...");
         BuildWalkableGrid();
     }
 

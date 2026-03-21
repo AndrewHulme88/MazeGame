@@ -11,9 +11,28 @@ public class EnemyAI : MonoBehaviour
     private int pathIndex;
     private float repathTimer;
 
+    private void Start()
+    {
+        if (MazeGrid.Instance == null)
+        {
+            Debug.LogError("MazeGrid.Instance is null");
+            enabled = false;
+            return;
+        }
+
+        Vector3Int startCell = MazeGrid.Instance.WorldToCell(transform.position);
+
+        if (!MazeGrid.Instance.IsWalkable(startCell))
+        {
+            Debug.LogError($"Ghost spawned in non-walkable cell: {startCell}");
+        }
+
+        transform.position = MazeGrid.Instance.CellToWorldCenter(startCell);
+    }
+
     private void Update()
     {
-        repathTimer += Time.deltaTime;
+        repathTimer -= Time.deltaTime;
 
         if (repathTimer <= 0f)
         {
@@ -30,6 +49,12 @@ public class EnemyAI : MonoBehaviour
         Vector3Int playerCell = MazeGrid.Instance.WorldToCell(player.position);
 
         currentPath = GridPathfinder.FindPath(enemyCell, playerCell);
+
+        if(currentPath == null)
+        {
+            return;
+        }
+
         pathIndex = 1;
     }
 
