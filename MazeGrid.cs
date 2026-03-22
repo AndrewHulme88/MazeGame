@@ -16,7 +16,6 @@ public class MazeGrid : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        Debug.Log("MazeGrid Awake: Building walkable grid...");
         BuildWalkableGrid();
     }
 
@@ -29,7 +28,7 @@ public class MazeGrid : MonoBehaviour
         {
             for (int y = 0; y < bounds.size.y; y++)
             {
-                Vector3Int cellPos = new Vector3Int(bounds.xMin + x, bounds.yMax + y, 0);
+                Vector3Int cellPos = new Vector3Int(bounds.xMin + x, bounds.yMin + y, 0);
                 bool hasWall = wallTilemap.HasTile(cellPos);
                 walkableGrid[x, y] = !hasWall;
             }
@@ -49,6 +48,7 @@ public class MazeGrid : MonoBehaviour
 
         int x = cellPos.x - bounds.xMin;
         int y = cellPos.y - bounds.yMin;
+        Debug.Log($"Checking walkability of cell {cellPos} at grid index ({x}, {y}): {walkableGrid[x, y]}");
         return walkableGrid[x, y];
     }
 
