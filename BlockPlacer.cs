@@ -23,7 +23,7 @@ public class BlockPlacer : MonoBehaviour
         }
 
         moveAction = playerInput.actions["Move"];
-        placeBlockAction = playerInput.actions["PlaceBlock"];
+        placeBlockAction = playerInput.actions["Jump"];
     }
 
     private void Update()
