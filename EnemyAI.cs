@@ -6,10 +6,16 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private Transform player;
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float pathUpdateInterval = 0.2f;
+    [SerializeField] private float chaseDistance = 7f;
+    [SerializeField] private float wanderRadius = 8f;
+    [SerializeField] private float wanderInterval = 1.5f;
+    [SerializeField] private int maxWanderAttempts = 20;
 
     private List<Vector3Int> currentPath;
     private int pathIndex;
     private float repathTimer;
+    private float wanderTimer;
+    private Vector3Int currentWanderTarget;
 
     private void Start()
     {
@@ -48,14 +54,30 @@ public class EnemyAI : MonoBehaviour
         Vector3Int enemyCell = MazeGrid.Instance.WorldToCell(transform.position);
         Vector3Int playerCell = MazeGrid.Instance.WorldToCell(player.position);
 
-        currentPath = GridPathfinder.FindPath(enemyCell, playerCell);
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if(currentPath == null)
+        if (distanceToPlayer <= chaseDistance)
         {
+            currentPath = GridPathfinder.FindPath(enemyCell, playerCell);
+
+            if(currentPath == null)
+            {
+                return;
+            }
+
+            pathIndex = 1;
             return;
         }
 
-        pathIndex = 1;
+        wanderTimer -= pathUpdateInterval;
+
+        if(currentPath == null || pathIndex >= currentPath.Count || wanderTimer <= 0f)
+        {
+            currentWanderTarget = GetRandomWanderTarget(enemyCell);
+            currentPath = GridPathfinder.FindPath(enemyCell, currentWanderTarget);
+            pathIndex = 1;
+            wanderTimer = wanderInterval;
+        }
     }
 
     private void MoveAlongPath()
@@ -71,5 +93,23 @@ public class EnemyAI : MonoBehaviour
             transform.position = targetPos;
             pathIndex++;
         }
+    }
+
+    private Vector3Int GetRandomWanderTarget(Vector3Int origin)
+    {
+        for (int i = 0; i < maxWanderAttempts; i++)
+        {
+            int offsetX = Random.Range(-Mathf.RoundToInt(wanderRadius), Mathf.RoundToInt(wanderRadius) + 1);
+            int offsetY = Random.Range(-Mathf.RoundToInt(wanderRadius), Mathf.RoundToInt(wanderRadius) + 1);
+
+            Vector3Int candidate = new Vector3Int(origin.x + offsetX, origin.y + offsetY, 0);
+
+            if(MazeGrid.Instance.InBounds(candidate) && MazeGrid.Instance.IsWalkable(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        return origin;
     }
 }
