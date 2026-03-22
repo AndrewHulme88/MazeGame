@@ -14,6 +14,11 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
+    private void Start()
+    {
+        FindFirstObjectByType<UIManager>().UpdateLives(playerLives);
+    }
+
     private void FixedUpdate()
     {
         Vector2 moveInput = InputSystem.actions["Move"].ReadValue<Vector2>();
@@ -26,10 +31,12 @@ public class PlayerController : MonoBehaviour
         {
             playerLives--;
 
+            FindFirstObjectByType<UIManager>().UpdateLives(playerLives);
             FindFirstObjectByType<LevelManager>().ReturnToStartPoint();
 
             if (playerLives <= 0)
             {
+                playerLives = 0;
                 Debug.Log("Game Over!");
                 // Implement game over logic here (e.g., reload scene, show game over screen)
             }

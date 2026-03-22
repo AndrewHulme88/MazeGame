@@ -19,8 +19,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        FindFirstObjectByType<UIManager>().UpdateGold(currentGold);
+    }
+
     public void AddGold(int amount)
     {
         currentGold += amount;
+        FindFirstObjectByType<UIManager>().UpdateGold(currentGold);
     }
 }
