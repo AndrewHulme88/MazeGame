@@ -8,7 +8,7 @@ public class PickupGold : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            //GameManager.Instance.AddGold(1);
+            GameManager.Instance.AddGold(goldAmount);
             Destroy(gameObject);
         }
     }

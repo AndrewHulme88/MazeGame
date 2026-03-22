@@ -22,6 +22,5 @@ public class GameManager : MonoBehaviour
     public void AddGold(int amount)
     {
         currentGold += amount;
-        Debug.Log("Gold added: " + amount + ". Total Gold: " + currentGold);
     }
 }
