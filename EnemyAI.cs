@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] private float wanderRadius = 8f;
     [SerializeField] private float wanderInterval = 1.5f;
     [SerializeField] private int maxWanderAttempts = 20;
+    [SerializeField] private Animator animator;
 
     private List<Vector3Int> currentPath;
     private int pathIndex;
@@ -19,19 +20,18 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+
         if (MazeGrid.Instance == null)
         {
-            Debug.LogError("MazeGrid.Instance is null");
             enabled = false;
             return;
         }
 
         Vector3Int startCell = MazeGrid.Instance.WorldToCell(transform.position);
-
-        if (!MazeGrid.Instance.IsWalkable(startCell))
-        {
-            Debug.LogError($"Ghost spawned in non-walkable cell: {startCell}");
-        }
 
         transform.position = MazeGrid.Instance.CellToWorldCenter(startCell);
     }
@@ -47,6 +47,31 @@ public class EnemyAI : MonoBehaviour
         }
 
         MoveAlongPath();
+        UpdateAnimation();
+    }
+
+    private void UpdateAnimation()
+    {
+        Vector2 moveDir = GetCurrentMoveDirection();
+        animator.SetFloat("MoveX", moveDir.x);
+        animator.SetFloat("MoveY", moveDir.y);
+    }
+
+    private Vector2 GetCurrentMoveDirection()
+    {
+        if(currentPath == null || pathIndex >= currentPath.Count)
+            return Vector2.down;
+
+        Vector3 currentTarget = MazeGrid.Instance.CellToWorldCenter(currentPath[pathIndex]);
+        Vector3 delta = currentTarget - transform.position;
+
+        if(Mathf.Abs(delta.x) > Mathf.Abs(delta.y))
+            return new Vector2(Mathf.Sign(delta.x), 0f);
+
+        if (Mathf.Abs(delta.y) > 0.001f)
+            return new Vector2(0f, Mathf.Sign(delta.y));
+
+        return Vector2.down;
     }
 
     private void Repath()
