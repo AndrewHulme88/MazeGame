@@ -16,6 +16,8 @@ public class PickupGold : MonoBehaviour
                 Instantiate(pickupEffect, transform.position, Quaternion.identity);
             }
 
+            FindFirstObjectByType<LevelEnd>().DecreaseCoinCount();
+
             Destroy(gameObject);
         }
     }
