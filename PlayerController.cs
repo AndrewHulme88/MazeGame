@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private Animator animator;
+    [SerializeField] private GameObject deathParticles;
 
     public int playerLives = 3;
 
@@ -68,6 +69,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            Instantiate(deathParticles, transform.position, Quaternion.identity);
             playerLives--;
 
             FindFirstObjectByType<UIManager>().UpdateLives(playerLives);
