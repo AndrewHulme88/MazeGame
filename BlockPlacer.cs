@@ -9,6 +9,7 @@ public class BlockPlacer : MonoBehaviour
     [SerializeField] private int MaxBlocks = 3;
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private LayerMask blockingLayers;
+    [SerializeField] private GameObject blockParticles;
 
     private InputAction moveAction;
     private InputAction placeBlockAction;
@@ -97,6 +98,8 @@ public class BlockPlacer : MonoBehaviour
             MazeGrid.Instance.CellToWorldCenter(targetCell),
             Quaternion.identity
         );
+
+        Instantiate(blockParticles, blockObj.transform.position, Quaternion.identity);
 
         PlacedBlock block = blockObj.GetComponent<PlacedBlock>();
         block.Initialize(targetCell, blockLifetime);
