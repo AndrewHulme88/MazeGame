@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -28,5 +29,11 @@ public class GameManager : MonoBehaviour
     {
         currentGold += amount;
         FindFirstObjectByType<UIManager>().UpdateGold(currentGold);
+    }
+
+    public void LevelCompleted()
+    {
+        Debug.Log("Level Completed! Total Gold: " + currentGold);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

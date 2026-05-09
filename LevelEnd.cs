@@ -4,12 +4,15 @@ using TMPro;
 public class LevelEnd : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI coinsRemainingText;
+    [SerializeField] private AudioClip levelCompleteSound;
 
     private int totalCoinsInLevel;
     private bool allCoinsCollected = false;
+    private AudioSource audioPlayer;
 
     private void Start()
     {
+        audioPlayer = GameObject.FindWithTag("AudioPlayer").GetComponent<AudioSource>();
         coinsRemainingText.gameObject.SetActive(false);
         totalCoinsInLevel = FindObjectsByType<PickupGold>(FindObjectsSortMode.None).Length;
         UpdateCoinsRemainingText();
@@ -22,6 +25,12 @@ public class LevelEnd : MonoBehaviour
 
         if (totalCoinsInLevel <= 0)
         {
+            if (levelCompleteSound != null)
+            {
+                audioPlayer.Stop();
+                audioPlayer.PlayOneShot(levelCompleteSound);
+            }
+
             allCoinsCollected = true;
             coinsRemainingText.gameObject.SetActive(false);
         }
@@ -41,7 +50,7 @@ public class LevelEnd : MonoBehaviour
         {
             if(allCoinsCollected)
             {
-                //GameManager.Instance.LevelCompleted();
+                GameManager.Instance.LevelCompleted();
             }
             else
             {
